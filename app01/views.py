@@ -49,7 +49,7 @@ class RegisterModelForm(forms.ModelForm):
 def register(request):
     """注册功能"""
     form = RegisterModelForm()
-    return render(request, 'register.html', {'form': form})
+    return render(request, 'app01/register.html', {'form': form})
 
 
 if __name__ == '__main__':
