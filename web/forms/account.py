@@ -56,7 +56,8 @@ class SendSmsForm(forms.Form):  # 继承forms.Form，因为ModelForm和数据库
         exists = models.UserInfo.objects.filter(mobile_phone=mobile_phone).exists()
         # 如果存在，返回以下异常
         if exists:
-            raise ValidationError('手机号码已存在')
+            # self.add_error('mobile_phone','手机号码已存在')
+            raise ValidationError('手机号码已存在') # 同上面，区别出现异常，下面不继续执行
 
         # 发短信 & 写入redis
         # 随机生成验证码
@@ -69,35 +70,3 @@ class SendSmsForm(forms.Form):  # 继承forms.Form，因为ModelForm和数据库
         conn.set(mobile_phone, code, ex=60)  # 超时时间为60s
 
         return mobile_phone
-    # def __init__(self, request, *args, **kwargs):
-    #     """将 views.py.send_sms的request传过来"""
-    #     super.__init__(*args, **kwargs)
-    #     self.request = request
-    #
-    # def clean_mobile_phone(self):
-    #     """手机号码构验的钩子"""
-    #     # 用户提交的手机号码
-    #     mobile_phone = self.cleaned_data['mobile_phone']
-    #
-    #     # 判断模板是否有问题
-    #     tpl = self.request.GET.get('tpl')  # 短信的模板：register or login
-    #     template_id = settings.TENCENT_SMS_TEMPLATE.get(tpl)  # 找到settings.py中对应的短信模板id
-    #     if not template_id:
-    #         raise ValidationError('模板错误')
-    #
-    #     # 校验数据库中是否存在这个手机号码
-    #     exists = models.UserInfo.objects.filter(mobile_phone=mobile_phone).exists()
-    #     # 如果存在，返回以下异常
-    #     if exists:
-    #         raise ValidationError('手机号码已存在')
-    #
-    #     # 发短信 & 写入redis
-    #     code = random.randrange(1000, 9999)
-    #     self.code = code
-    #     print(code)
-    #
-    #     # 验证码写入redis(django-redis)
-    #     conn = get_redis_connection()  # 连接redis
-    #     conn.set(mobile_phone, code, ex=60)  # 超时时间为60s
-    #
-    #     return mobile_phone

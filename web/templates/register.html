@@ -81,7 +81,8 @@
                         {# ajax请求发送成功之后，自动执行的回调函数，res就是后端返回的值#}
                         {#console.log(res);#}
                         if (res.status) {
-                            console.log('成功，倒计时');
+                            {#console.log('成功，倒计时');#}
+                            sendSmsRemind();  {#定义一个函数#}
                         } else {
                             {#   status:False,error:{mobile_phone:['错误信息']}    #}
                             {# $.each() 表示循环#}
@@ -93,6 +94,22 @@
                     }
                 })
             })
+        }
+          {#倒计时函数#}
+        function sendSmsRemind(){
+            {#找到验证码按钮#}
+            var $smsBtn = $("#btnSms");
+            {#按钮加了 disabled属性，不可以点击操作#}
+            $smsBtn .prop("disabled",true);
+            var time = 60;
+            var remind = setInterval(function (){
+                $smsBtn.val(time+'秒重新发送');
+                time = time-1;
+                if (time <1){
+                    clearInterval(remind); {# 定时器关闭 #}
+                    $smsBtn.val('获取验证码').prop('disabled',false);
+                }
+            },1000); {#每隔一秒执行1次 #}
         }
     </script>
 {% endblock %}
