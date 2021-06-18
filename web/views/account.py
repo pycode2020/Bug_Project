@@ -23,7 +23,7 @@ def send_sms(request):
     # form.is_valid只是校验手机号码，不能为空，格式是否正确
     if form.is_valid():
         return JsonResponse({'status': True})
-    return HttpResponse({'status': False,'error':form.errors})
+    return JsonResponse({'status': False,'error':form.errors})
 
     # # 实例化SendSmsForm
     # form = SendSmsForm(request,data=request.GET)

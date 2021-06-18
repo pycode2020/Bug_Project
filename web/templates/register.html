@@ -4,6 +4,13 @@
 
 {% block css %}
     <link rel="stylesheet" href="{% static 'css/account.css' %}">
+    <style>
+        .error-msg {
+            color: red;
+            position: absolute;
+            font-size: 12px;
+        }
+    </style>
 {% endblock %}
 
 {% block content %}
@@ -21,6 +28,8 @@
                             {#生成input框#}
                             <div class="col-md-7">
                                 {{ field }}
+                                {# 错误提示信息标签#}
+                                <span class="error-msg"></span>
                             </div>
                             {#生成按钮#}
                             <div class="col-md-5">
@@ -35,6 +44,8 @@
                         <label for="{{ field.id_for_label }}">{{ field.label }}</label>
                         {#生成input框#}
                         {{ field }}
+                        {# 错误提示信息标签#}
+                        <span class="error-msg"></span>
                     </div>
                 {% endif %}
             {% endfor %}
@@ -52,18 +63,33 @@
         })
 
         {#点击获取验证码按钮的绑定事件#}
+
         function bindClickBtnSms() {
             $('#btnSms').click(function () {
+                {#每次点击时，先清空所有的错误提示信息#}
+                $('.error-msg').empty();
+
                 {#获取用户输入的手机号，找到输入框的ID，获取内容#}
                 var mobilePhone = $('#id_mobile_phone').val();
                 {#发送ajax请求，手机号码#}
                 $.ajax({
                     url: '{% url "send_sms" %}', {#url提交地址，urls.py使用了name，可以使用反向解析;等价于 /send/sms#}
                     type: 'GET', {# GET or POST #}
-                    data: {mobile_phone: mobilePhone, tpl: 'register'}, {# 参数 tpl:为短信模板#}
+                    data: {mobile_phone: mobilePhone}, {# 参数 #}
+                    dataType: 'JSON', {# 将服务端返回的数据反序列号为字典 #}
                     success: function (res) {
                         {# ajax请求发送成功之后，自动执行的回调函数，res就是后端返回的值#}
-                        console.log(res)
+                        {#console.log(res);#}
+                        if (res.status) {
+                            console.log('成功，倒计时');
+                        } else {
+                            {#   status:False,error:{mobile_phone:['错误信息']}    #}
+                            {# $.each() 表示循环#}
+                            $.each(res.error, function (key, value) {
+                                {#取#id_"+ key 标签的下一个标签#}
+                                $("#id_" + key).next().text(value[0]);
+                            })
+                        }
                     }
                 })
             })
