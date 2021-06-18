@@ -21,7 +21,7 @@ from web import urls
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     # 存在多个app时，添加namespace='app01'避免app01.urls.py内路由反向解析时name相同导致冲突。
-    url(r'^app01/', include('app01.urls', namespace='app01')),
+    # url(r'^app01/', include('app01.urls',namespace='app01')),
     # web
     url(r'^', include('web.urls')),
 ]

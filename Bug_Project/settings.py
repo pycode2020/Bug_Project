@@ -120,6 +120,37 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static')
 ]
 
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://127.0.0.1:6379", # 安装redis的主机的 IP 和 端口
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+            "CONNECTION_POOL_KWARGS": {
+                "max_connections": 1000,
+                "encoding": 'utf-8'
+            },
+        }
+    }
+}
+
+
+######## sms  ########
+# 腾讯云短信应用的 app_id
+TENCENT_SMS_APP_ID = 6666666666
+
+# 腾讯云短信应用的 app_key
+TENCENT_SMS_APP_KEY = "6666666666666666666666"
+
+# 腾讯云短信签名内容
+TENCENT_SMS_SIGN = "Python之路"
+
+TENCENT_SMS_TEMPLATE = {
+    'register': 548760,
+    'login': 548762
+}
+
+
 try:
     from local_settings import *
 except ImportError:
