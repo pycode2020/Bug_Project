@@ -33,7 +33,7 @@
                             </div>
                             {#生成验证码图片#}
                             <div class="col-md-5">
-                                <img src="{% url 'image_code' %}">
+                                <img src="{% url 'image_code' %}" id="imageCode" title="点击更换验证码">
                             </div>
                         </div>
                     </div>
@@ -60,5 +60,13 @@
 {% endblock %}
 
 {% block js %}
-
+<script>
+    {#点击刷新验证码#}
+    $(function () {
+        $('#imageCode').click(function () {
+            var oldSrc =  $(this).attr('src');  {#获取原来的地址#}
+            $(this).attr('src',oldSrc+"?");{#在原地址后面加？号，就会重新请求#}
+        })
+    })
+</script>
 {% endblock %}

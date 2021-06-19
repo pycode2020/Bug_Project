@@ -75,6 +75,11 @@ def image_code(request):
     """ 生成图片验证码"""
     from utils.image_code import check_code
     img_object, code = check_code()
+
+    # 保存至 session
+    request.session['image_code'] = code
+    request.session.set_expiry(60) #主动修改session 超时时间60秒，默认为2周
+
     # 将图片写到内存中
     from io import BytesIO
     stream = BytesIO()
