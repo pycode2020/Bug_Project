@@ -1,6 +1,6 @@
 {% extends 'layout/basic.html' %}
 {% load static %}
-{% block title %}用户注册{% endblock %}
+{% block title %}短信登录{% endblock %}
 
 {% block css %}
     <link rel="stylesheet" href="{% static 'css/account.css' %}">
@@ -15,14 +15,14 @@
 
 {% block content %}
     <div class="account">
-        <div class="title">用户注册</div>
-        <form id="regForm" method="POST" novalidate>
+        <div class="title">用户短信登录</div>
+        <form id="smsForm" method="POST" novalidate>
             {% csrf_token %}
             {% for field in form %}
                 {#判断如果是验证码，就添加一个按钮#}
                 {% if field.name == 'code' %}
                     <div class="form-group">
-                        {#field.label 会去找ModelForm,ModeForm 实际获取的是UserInfo中的verbose_name#}
+                        {#field.label 会去找ModelForm,ModeFrom 实际获取的是UserInfo中的verbose_name#}
                         <label for="{{ field.id_for_label }}">{{ field.label }}</label>
                         <div class="row">
                             {#生成input框#}
@@ -40,7 +40,7 @@
                     </div>
                 {% else %}
                     <div class="form-group">
-                        {#field.label 会去找ModelForm,ModeForm 实际获取的是UserInfo中的verbose_name#}
+                        {#field.label 会去找ModelForm,ModeFrom 实际获取的是UserInfo中的verbose_name#}
                         <label for="{{ field.id_for_label }}">{{ field.label }}</label>
                         {#生成input框#}
                         {{ field }}
@@ -52,7 +52,7 @@
             {# <button id="btnSubmit" type="submit" class="btn btn-primary btn-block">注 册</button>#}
             <div class="row">
                 <div class="col-xs-12">
-                    <input id="btnSubmit" type="button" class="btn btn-primary btn-block" value="注  册"/>
+                    <input id="btnSubmit" type="button" class="btn btn-primary btn-block" value="登  录"/>
                 </div>
             </div>
         </form>
@@ -70,8 +70,7 @@
             {# 注册按钮函数 #}
         })
 
-        {#点击注册按钮的绑定事件#}
-
+        {#点击登录按钮的绑定事件#}
         function bindClickBtnSubmit() {
             {#定位按钮，点击#}
             $('#btnSubmit').click(function () {
@@ -80,9 +79,9 @@
 
                 {#数据ajax发送到后台#}
                 $.ajax({
-                    url: "{% url 'register' %}",
+                    url: "{% url 'login_sms' %}",
                     type: "POST",
-                    data: $('#regForm').serialize(), {#收集表单数据,serialize() 获取所有form表单字段的数据 + csrf token#}
+                    data: $('#smsForm').serialize(), {#收集表单数据,serialize() 获取所有form表单字段的数据 + csrf token#}
                     dataType: "JSON",
                     success: function (res) {
                         console.log(res)
@@ -115,7 +114,7 @@
                 $.ajax({
                     url: '{% url "send_sms" %}', {#url提交地址，urls.py使用了name，可以使用反向解析;等价于 /send/sms#}
                     type: 'GET', {# GET or POST #}
-                        data: {mobile_phone: mobilePhone,tpl:'register'}, {# 参数 #}
+                        data: {mobile_phone: mobilePhone,tpl:'login'}, {# 参数 #}
                     dataType: 'JSON', {# 将服务端返回的数据反序列号为字典 #}
                     success: function (res) {
                         {# ajax请求发送成功之后，自动执行的回调函数，res就是后端返回的值#}

@@ -2,16 +2,18 @@
 用户账号相关的功能：注册，短信，登录，注销
 """
 from django.shortcuts import render, HttpResponse
-from web.forms.account import RegisterModelForm, SendSmsForm
+
+import web.models
+from web.forms.account import RegisterModelForm, SendSmsForm,LoginSMSFrom
 from django.http import JsonResponse
 from django_redis import get_redis_connection
-
+from web import models
 
 def register(request):
     """注册页面"""
     if request.method == 'GET':
         form = RegisterModelForm()
-        return render(request, 'register.html', {'from': form})
+        return render(request, 'register.html', {'form': form})
 
     # 获取POST数据进行校验
     form = RegisterModelForm(data=request.POST)
@@ -41,3 +43,21 @@ def send_sms(request):
         print('验证码：', redis_code)
         return JsonResponse({'status': True,'code':redis_str_code})
     return JsonResponse({'status': False,'error':form.errors})
+
+
+def login_sms(request):
+    """ 短信登录 """
+    if request.method == 'GET':
+        form = LoginSMSFrom()
+        return render(request,'login_sms.html',{'form':form})
+    form = LoginSMSFrom(request.POST)
+    if form.is_valid():
+        # 用户输入校验正确
+        mobile_phone = form.cleaned_data['mobile_phone']
+        #用户信息存放入session
+        user_object = models.UserInfo.objects.filter(mobile_phone=mobile_phone).first()
+        request.session['user_id'] = user_object.id
+        request.session['user_name'] = user_object.username
+
+        return JsonResponse({'status':True,'data':'/index/'})
+    return JsonResponse({'status':False,'error':form.errors})
