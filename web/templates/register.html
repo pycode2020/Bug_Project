@@ -1,6 +1,6 @@
 {% extends 'layout/basic.html' %}
-{% block title %}用户注册{% endblock %}
 {% load static %}
+{% block title %}用户注册{% endblock %}
 
 {% block css %}
     <link rel="stylesheet" href="{% static 'css/account.css' %}">
@@ -16,7 +16,7 @@
 {% block content %}
     <div class="account">
         <div class="title">用户注册</div>
-        <form id="form" method="POST" novalidate>
+        <form id="regForm" method="POST" novalidate>
             {% csrf_token %}
             {% for field in from %}
                 {#判断如果是验证码，就添加一个按钮#}
@@ -49,7 +49,12 @@
                     </div>
                 {% endif %}
             {% endfor %}
-            <button type="submit" class="btn btn-primary btn-block">注 册</button>
+            {# <button id="btnSubmit" type="submit" class="btn btn-primary btn-block">注 册</button>#}
+            <div class="row">
+                <div class="col-xs-12">
+                    <input id="btnSubmit" type="button" class="btn btn-primary btn-block" value="注  册"/>
+                </div>
+            </div>
         </form>
     </div>
 
@@ -60,10 +65,45 @@
         {#页面框架加载完后自动执行函数#}
         $(function () {
             bindClickBtnSms();
+            {# 验证按钮函数 #}
+            bindClickBtnSubmit();
+            {# 注册按钮函数 #}
         })
 
-        {#点击获取验证码按钮的绑定事件#}
+        {#点击注册按钮的绑定事件#}
 
+        function bindClickBtnSubmit() {
+            {#定位按钮，点击#}
+            $('#btnSubmit').click(function () {
+                {#每次点击时，先清空所有的错误提示信息#}
+                $('.error-msg').empty();
+
+                {#数据ajax发送到后台#}
+                $.ajax({
+                    url: "{% url 'register' %}",
+                    type: "POST",
+                    data: $('#regForm').serialize(), {#收集表单数据,serialize() 获取所有form表单字段的数据 + csrf token#}
+                    dataType: "JSON",
+                    success: function (res) {
+                        console.log(res)
+                        if (res.status) {
+                            {#如果注册成功，跳转。#}
+                            location.href = res.data;
+                        } else {
+                            {#如果注册失败，展示错误信息。#}
+                            $.each(res.error, function (key, value) {
+                                {#取#id_"+ key 标签的下一个标签#}
+                                $("#id_" + key).next().text(value[0]);
+                            })
+                        }
+                    }
+                })
+            })
+
+        }
+
+
+        {#点击获取验证码按钮的绑定事件#}
         function bindClickBtnSms() {
             $('#btnSms').click(function () {
                 {#每次点击时，先清空所有的错误提示信息#}
@@ -75,14 +115,15 @@
                 $.ajax({
                     url: '{% url "send_sms" %}', {#url提交地址，urls.py使用了name，可以使用反向解析;等价于 /send/sms#}
                     type: 'GET', {# GET or POST #}
-                    data: {mobile_phone: mobilePhone}, {# 参数 #}
+                        data: {mobile_phone: mobilePhone}, {# 参数 #}
                     dataType: 'JSON', {# 将服务端返回的数据反序列号为字典 #}
                     success: function (res) {
                         {# ajax请求发送成功之后，自动执行的回调函数，res就是后端返回的值#}
                         {#console.log(res);#}
                         if (res.status) {
                             {#console.log('成功，倒计时');#}
-                            sendSmsRemind();  {#定义一个函数#}
+                            {#定义一个函数#}
+                            sendSmsRemind();
                         } else {
                             {#   status:False,error:{mobile_phone:['错误信息']}    #}
                             {# $.each() 表示循环#}
@@ -95,21 +136,24 @@
                 })
             })
         }
-          {#倒计时函数#}
-        function sendSmsRemind(){
+
+        {#验证码倒计时函数#}
+        function sendSmsRemind() {
             {#找到验证码按钮#}
             var $smsBtn = $("#btnSms");
             {#按钮加了 disabled属性，不可以点击操作#}
-            $smsBtn .prop("disabled",true);
+            $smsBtn.prop("disabled", true);
             var time = 60;
-            var remind = setInterval(function (){
-                $smsBtn.val(time+'秒重新发送');
-                time = time-1;
-                if (time <1){
-                    clearInterval(remind); {# 定时器关闭 #}
-                    $smsBtn.val('获取验证码').prop('disabled',false);
+            var remind = setInterval(function () {
+                $smsBtn.val(time + '秒重新发送');
+                time = time - 1;
+                if (time < 1) {
+                    clearInterval(remind);
+                    {# 定时器关闭 #}
+                    $smsBtn.val('获取验证码').prop('disabled', false);
                 }
-            },1000); {#每隔一秒执行1次 #}
+            }, 1000);
+            {#每隔一秒执行1次 #}
         }
     </script>
 {% endblock %}
