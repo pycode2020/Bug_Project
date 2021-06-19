@@ -7,5 +7,9 @@ urlpatterns = [
     # 短信验证
     url(r'^send/sms/$', account.send_sms, name='send_sms'),
     # 短信登录
-    url(r'^login/sms/$', account.login_sms, name='login_sms')
+    url(r'^login/sms/$', account.login_sms, name='login_sms'),
+    # 用户登录
+    url(r'^login/$', account.login, name='login'),
+    # 获取图片验证码地址
+    url(r'^image/code/$', account.image_code, name='image_code'),
 ]

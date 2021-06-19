@@ -168,6 +168,7 @@ class SendSmsForm(forms.Form):  # 继承forms.Form，因为ModelForm和数据库
 
 
 class LoginSMSFrom(BootStrapForm, forms.Form):
+    """ 短信登录 """
     # 对手机号码字段类型重写，进行正则判断
     mobile_phone = forms.CharField(label='手机号码', validators=[RegexValidator(r'^(1[3|4|5|6|7|8|9])\d{9}$', '手机号格式错误'), ])
 
@@ -202,4 +203,8 @@ class LoginSMSFrom(BootStrapForm, forms.Form):
         return code
 
 
-
+class LoginFrom(BootStrapForm, forms.Form):
+    """ 用户名登录 """
+    username = forms.CharField(label='用户名', widget=forms.TextInput())
+    password = forms.CharField(label='密码', widget=forms.PasswordInput())
+    code = forms.CharField(label='图片验证码', widget=forms.TextInput())
