@@ -11,6 +11,8 @@ urlpatterns = [
     url(r'^login/sms/$', account.login_sms, name='login_sms'),
     # 用户登录
     url(r'^login/$', account.login, name='login'),
+    # 退出登录
+    url(r'^logout/$', account.logout, name='logout'),
     # 获取图片验证码地址
     url(r'^img/code/$', account.image_code, name='image_code'),
     # 首页

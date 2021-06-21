@@ -100,6 +100,12 @@ def login(request):
     return render(request, 'login.html', {'form': form})
 
 
+def logout(request):
+    # 清空session数据
+    request.session.flush()
+    return redirect('index')
+
+
 def image_code(request):
     """ 生成图片验证码"""
     from utils.image_code import check_code
