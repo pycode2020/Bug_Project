@@ -205,6 +205,29 @@ class LoginSMSFrom(BootStrapForm, forms.Form):
 
 class LoginFrom(BootStrapForm, forms.Form):
     """ 用户名登录 """
-    username = forms.CharField(label='用户名', widget=forms.TextInput())
-    password = forms.CharField(label='密码', widget=forms.PasswordInput())
+    username = forms.CharField(label='用户名或邮箱', widget=forms.TextInput())
+    password = forms.CharField(label='密码', widget=forms.PasswordInput(
+        render_value=True))  # render_value=True 前端页面输入错误密码，POST提交后，密码不刷新清空
     code = forms.CharField(label='图片验证码', widget=forms.TextInput())
+
+    # 重写init 将request传过来
+    def __init__(self, request, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.request = request
+
+    def clean_password(self):
+        """密码加密 钩子；密码验证功能在views中判断"""
+        pwd = self.cleaned_data['password']
+        return encrypt.md5(pwd)
+
+    def clean_code(self):
+        """钩子，校验图片验证码"""
+        # 读取用户输入的验证码
+        code = self.cleaned_data['code']
+        # 获取session 中的验证码
+        session_code = self.request.session.get('image_code')
+        if not session_code:
+            raise ValidationError('验证码过期')
+        # 将验证码转成大写对比
+        if code.strip().upper() != session_code.strip().upper():
+            raise ValidationError('验证码错误')

@@ -1,5 +1,6 @@
 from django.conf.urls import url, include
 from web.views import account
+from web.views import home
 
 urlpatterns = [
     # 注册
@@ -11,5 +12,7 @@ urlpatterns = [
     # 用户登录
     url(r'^login/$', account.login, name='login'),
     # 获取图片验证码地址
-    url(r'^image/code/$', account.image_code, name='image_code'),
+    url(r'^img/code/$', account.image_code, name='image_code'),
+    # 首页
+    url(r'^index/$',home.index, name='index'),
 ]

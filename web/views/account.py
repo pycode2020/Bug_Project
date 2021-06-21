@@ -1,13 +1,14 @@
 """
 用户账号相关的功能：注册，短信，登录，注销
 """
-from django.shortcuts import render, HttpResponse
+from django.shortcuts import render, HttpResponse, redirect
 
 import web.models
 from web.forms.account import RegisterModelForm, SendSmsForm, LoginSMSFrom, LoginFrom
 from django.http import JsonResponse
 from django_redis import get_redis_connection
 from web import models
+from web.views import home
 
 
 def register(request):
@@ -66,9 +67,37 @@ def login_sms(request):
 
 def login(request):
     """用户名和密码登录"""
-    form = LoginFrom()
+    if request.method == 'GET':
+        form = LoginFrom(request)
+        return render(request, 'login.html', {'form': form})
+
+    form = LoginFrom(request, data=request.POST)
+    if form.is_valid():
+        # 获取用户名和密码
+        username = form.cleaned_data['username']
+        password = form.cleaned_data['password']
+
+        # 用户名或邮箱或手机号登录 Q查询
+        from django.db.models import Q
+        # 获取数据库用户数据
+        # user_object = models.UserInfo.objects.filter(username=username, password=password).first()
+        # 获取数据库用户或手机或邮箱数据
+        user_object = models.UserInfo.objects.filter(
+            Q(username=username) | Q(email=username) | Q(mobile_phone=username)).filter(
+            password=password).first()
+
+        # 校验用户名和密码
+        if user_object:
+            # 登录成功保存用户session 信息
+            request.session['user_id'] = user_object.id
+            # session过期时间
+            request.session.set_expiry(60 * 60 * 24 * 2) # 秒/分/时/天
+
+            return redirect('index')
+        # 校验错误，把错误信息添加到from
+        form.add_error('username', '用户名密码错误')
+
     return render(request, 'login.html', {'form': form})
-    ...
 
 
 def image_code(request):
@@ -78,7 +107,7 @@ def image_code(request):
 
     # 保存至 session
     request.session['image_code'] = code
-    request.session.set_expiry(60) #主动修改session 超时时间60秒，默认为2周
+    request.session.set_expiry(60)  # 主动修改session 超时时间60秒，默认为2周
 
     # 将图片写到内存中
     from io import BytesIO

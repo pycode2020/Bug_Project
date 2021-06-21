@@ -49,9 +49,15 @@
                     </div>
                 {% endif %}
             {% endfor %}
-            {# <button id="btnSubmit" type="submit" class="btn btn-primary btn-block">注 册</button>#}
+
+            <div class="checkbox">
+                <div style="float: right">
+                    <a href="{% url 'login' %}"> 用户名密码登录</a>
+                </div>
+            </div>
+
             <div class="row">
-                <div class="col-xs-12">
+                <div class="col-md-3">
                     <input id="btnSubmit" type="button" class="btn btn-primary btn-block" value="登  录"/>
                 </div>
             </div>
@@ -71,6 +77,7 @@
         })
 
         {#点击登录按钮的绑定事件#}
+
         function bindClickBtnSubmit() {
             {#定位按钮，点击#}
             $('#btnSubmit').click(function () {
@@ -103,6 +110,7 @@
 
 
         {#点击获取验证码按钮的绑定事件#}
+
         function bindClickBtnSms() {
             $('#btnSms').click(function () {
                 {#每次点击时，先清空所有的错误提示信息#}
@@ -114,7 +122,7 @@
                 $.ajax({
                     url: '{% url "send_sms" %}', {#url提交地址，urls.py使用了name，可以使用反向解析;等价于 /send/sms#}
                     type: 'GET', {# GET or POST #}
-                        data: {mobile_phone: mobilePhone,tpl:'login'}, {# 参数 #}
+                    data: {mobile_phone: mobilePhone, tpl: 'login'}, {# 参数 #}
                     dataType: 'JSON', {# 将服务端返回的数据反序列号为字典 #}
                     success: function (res) {
                         {# ajax请求发送成功之后，自动执行的回调函数，res就是后端返回的值#}
@@ -137,6 +145,7 @@
         }
 
         {#验证码倒计时函数#}
+
         function sendSmsRemind() {
             {#找到验证码按钮#}
             var $smsBtn = $("#btnSms");
