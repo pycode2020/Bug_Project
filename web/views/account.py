@@ -27,7 +27,7 @@ def register(request):
         # 获取免费版价格策略
         policy_object = models.PricePolicy.objects.filter(category=1, title='个人免费版').first()
 
-        # 注册时创建交易记录，如果不想产生可以注释
+        # 方式一：注册时创建交易记录 方式二，不写，注释 方式一
         models.Transaction.objects.create(
             status=2,
             order=str(uuid.uuid4()),  # 随机字符串

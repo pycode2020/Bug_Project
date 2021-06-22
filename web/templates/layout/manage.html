@@ -52,22 +52,15 @@
                 <li><a href="#">日历</a></li>
                 <li><a href="#"><i class="fa fa-bell-o" aria-hidden="true"></i></a></li>
                 <li><a href="#"><i class="fa fa-bookmark" aria-hidden="true"></i></a></li>
-                {#根据auth.py/AuthMiddleware 中间件判断登录状态#}
-                {% if request.project %}
-                    {# 如果request.project 有值#}
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
-                           aria-expanded="false">{{ request.project.username }}<span class="caret"></span></a>
+                           aria-expanded="false">{{ request.project.user.username }}<span class="caret"></span></a>
                         <ul class="dropdown-menu">
                             <li><a href="{% url 'index' %}">回到官网</a></li>
                             <li role="separator" class="divider"></li>
                             <li><a href="{% url 'logout' %}">退出登录</a></li>
                         </ul>
                     </li>
-                {% else %}
-                    <li><a href="{% url 'register' %}">注 册</a></li>
-                    <li><a href="{% url 'login' %}">登 录</a></li>
-                {% endif %}
             </ul>
         </div><!-- /.navbar-collapse -->
     </div><!-- /.container-fluid -->
