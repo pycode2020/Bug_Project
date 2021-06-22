@@ -1,2 +1,17 @@
 {% extends 'layout/manage.html' %}
 {% load static %}
+
+{% block css %}
+{#    <style>#}
+{#        .project {#}
+{#            margin-top: 10px;#}
+{#        }#}
+{#    </style>#}
+{% endblock %}
+
+{% block content %}
+    <div class="container-fluid"> {#container-fluid平铺#}
+        <a class="btn btn-primary"><i class="fa fa-plus-circle" aria-hidden="true"></i> 新键项目</a>
+
+    </div>
+{% endblock %}

@@ -136,6 +136,15 @@ CACHES = {
     }
 }
 
+######## 登录白名单：无需登录可以访问 auth.py#######
+WHITE_REGEX_URL_LIST = [
+    '/register/',
+    '/send/sms/',
+    '/login/',
+    '/img/code/',
+    '/login/sms/',
+    '/index/',
+]
 
 ######## sms  ########
 # 腾讯云短信应用的 app_id
