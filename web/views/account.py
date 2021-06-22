@@ -2,7 +2,8 @@
 用户账号相关的功能：注册，短信，登录，注销
 """
 from django.shortcuts import render, HttpResponse, redirect
-
+import uuid
+import datetime
 import web.models
 from web.forms.account import RegisterModelForm, SendSmsForm, LoginSMSFrom, LoginFrom
 from django.http import JsonResponse
@@ -20,8 +21,22 @@ def register(request):
     # 获取POST数据进行校验
     form = RegisterModelForm(data=request.POST)
     if form.is_valid():  # is.valid()让form进行校验
-        # 验证通过后，写入数据库
+        # 验证通过后，写入用户表中（注册）
         instance = form.save()
+        # 获取免费版价格策略
+        policy_object = models.PricePolicy.objects.filter(category=1, title='个人免费版').first()
+
+        # 注册时创建交易记录，如果不想产生可以注释
+        models.Transaction.objects.create(
+            status=2,
+            order=str(uuid.uuid4()),  # 随机字符串
+            user=instance,
+            price_policy=policy_object,
+            count=0,
+            price=0,
+            start_datetime=datetime.datetime.now()
+        )
+
         return JsonResponse({'status': True, 'data': '/login/'})
     else:
         #  .errors 校验失败的错误信息
@@ -91,7 +106,7 @@ def login(request):
             # 登录成功保存用户session 信息
             request.session['user_id'] = user_object.id
             # session过期时间
-            request.session.set_expiry(60 * 60 * 24 * 2) # 秒/分/时/天
+            request.session.set_expiry(60 * 60 * 24 * 2)  # 秒/分/时/天
 
             return redirect('index')
         # 校验错误，把错误信息添加到from
