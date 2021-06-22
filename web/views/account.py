@@ -2,14 +2,15 @@
 用户账号相关的功能：注册，短信，登录，注销
 """
 from django.shortcuts import render, HttpResponse, redirect
-import uuid
-import datetime
-import web.models
 from web.forms.account import RegisterModelForm, SendSmsForm, LoginSMSFrom, LoginFrom
 from django.http import JsonResponse
 from django_redis import get_redis_connection
 from web import models
 from web.views import home
+import uuid
+import datetime
+import web.models
+
 
 
 def register(request):
