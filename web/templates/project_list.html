@@ -11,8 +11,35 @@
 
 {% block content %}
     <div class="container-fluid"> {#container-fluid平铺#}
-        <a class="btn btn-primary" data-toggle="modal" data-target="#addModal"><i class="fa fa-plus-circle"
-                                                                                  aria-hidden="true"></i> 新键项目</a>
+        <a class="btn btn-primary" data-toggle="modal" data-target="#addModal">
+            <i class="fa fa-plus-circle" aria-hidden="true"></i> 新键项目</a>
+
+        <div class="panel panel-default">
+            <div class="panel-heading"><i class="fa fa-star" aria-hidden="true"></i> 星标</div>
+            <div class="panel-body">
+                {% for item in project_dict.star %}
+                    <div>{{ item.name }}</div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="panel panel-default">
+            <div class="panel-heading"><i class="fa fa-list" aria-hidden="true"></i> 我创建的</div>
+            <div class="panel-body">
+                {% for item in project_dict.my %}
+                    <div>{{ item.name }}</div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="panel panel-default">
+            <div class="panel-heading"><i class="fa fa-handshake-o" aria-hidden="true"></i> 我参与的</div>
+            <div class="panel-body">
+                {% for item in project_dict.join %}
+                    <div>{{ item.name }}</div>
+                {% endfor %}
+            </div>
+        </div>
     </div>
 
     {# 新键项目 模态框 开始#}
