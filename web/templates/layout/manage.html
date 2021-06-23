@@ -41,6 +41,17 @@
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             {% all_project_list request %}
+
+            {#判断URL 是否为manage 开头，判断进入项目#}
+            {% if request.project.project %}
+                <ul class="nav navbar-nav">
+                    <li><a href="#">概览</a></li>
+                    <li><a href="#">问题</a></li>
+                    <li><a href="#">WIKI</a></li>
+                    <li><a href="#">...</a></li>
+                </ul>
+            {% endif %}
+
             <ul class="nav navbar-nav navbar-right">
                 <li><a href="#">工作台</a></li>
                 <li><a href="#">日历</a></li>

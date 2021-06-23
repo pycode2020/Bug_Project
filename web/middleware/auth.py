@@ -10,6 +10,7 @@ class Project(object):
     def __init__(self):
         self.user = None
         self.price_policy = None
+        self.project = None
 
 
 class AuthMiddleware(MiddlewareMixin):
@@ -18,8 +19,7 @@ class AuthMiddleware(MiddlewareMixin):
         """
         如果用户已登录，在request中赋值
         """
-        request.project  = Project()
-
+        request.project = Project()
 
         user_id = request.session.get('user_id', 0)
         user_object = models.UserInfo.objects.filter(id=user_id).first()
@@ -51,13 +51,13 @@ class AuthMiddleware(MiddlewareMixin):
 
         request.project.price_policy = _object.price_policy
 
-
-'''        # 方式二：免费的额度存储配置文件
+        '''
+                # 方式二：免费的额度存储配置文件
         # 获取当前用户，交易记录ID值最大的，已支付的值 （最近的交易记录）
-        _object = models.Transaction.objects.filter(user=user_object,status=2).order_by('-id').first()
+        _object = models.Transaction.objects.filter(user=user_object, status=2).order_by('-id').first()
         if not _object:
             # 没有购买，免费版
-             request.price_policy =  models.PricePolicy.objects.filter(category=1,title='个人免费版').first()
+            request.price_policy = models.PricePolicy.objects.filter(category=1, title='个人免费版').first()
         else:
             # 判断是否支付状态是否过期
             current_datetime = datetime.datetime.now()
@@ -66,4 +66,27 @@ class AuthMiddleware(MiddlewareMixin):
                 request.price_policy = models.PricePolicy.objects.filter(category=1, title='个人免费版').first()
             else:
                 request.price_policy = _object.price_policy
-'''
+        '''
+
+    def process_view(self, request, view, args, kwargs):
+        # 判断URL是否是以manage开头，如果是则判断项目ID是否是我创建OR我参与的
+        if not request.path_info.startswith('/manage/'):
+            return
+
+        # project_id必须是我创建或参与的
+        project_id = kwargs.get('project_id')
+        # 是否为我创建的
+        project_object = models.Project.objects.filter(creator=request.project.user, id=project_id).first()
+        if project_object:
+            # 如果是我创建的项目，通过
+            request.project.project = project_object
+            return
+        # 是否是我参与的项目
+        project_user_object = models.ProjectUser.objects.filter(user=request.project.user,
+                                                                project_id=project_id).first()
+        if project_user_object:
+            # 是我参与的项目
+            request.project.project = project_user_object.project
+            return
+
+        return redirect('project_list')
