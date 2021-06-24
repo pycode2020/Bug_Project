@@ -12,7 +12,7 @@ def all_project_list(request):
     # 2.获取我参与的所有项目
     join_project_list = models.ProjectUser.objects.filter(user=request.project.user)
 
-    return {'my': my_project_list, 'join': join_project_list}
+    return {'my': my_project_list, 'join': join_project_list, 'request': request}
 
 
 @register.inclusion_tag('inclusion/manage_memu_list.html')
@@ -25,11 +25,9 @@ def manage_memu_list(request):
         {'title': '文档', 'url': reverse('manage_wiki', kwargs={'project_id': request.project.project.id})},
         {'title': '设置', 'url': reverse('manage_setting', kwargs={'project_id': request.project.project.id})},
     ]
-    
+
     for item in data_list:
         if request.path_info.startswith(item['url']):
             item['class'] = 'active'
 
     return {'data_list': data_list}
-
-

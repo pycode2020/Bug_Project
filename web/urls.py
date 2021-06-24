@@ -3,6 +3,7 @@ from web.views import account
 from web.views import home
 from web.views import project
 from web.views import manage
+from web.views import wiki
 
 urlpatterns = [
     # 注册
@@ -34,7 +35,7 @@ urlpatterns = [
         url(r'^issues/$', manage.issues, name='manage_issues'),
         url(r'^statistics/$', manage.statistics, name='manage_statistics'),
         url(r'^file/$', manage.file, name='manage_file'),
-        url(r'^wiki/$', manage.wiki, name='manage_wiki'),
+        url(r'^wiki/$', wiki.wiki, name='manage_wiki'),
         url(r'^setting/$', manage.setting, name='manage_setting'),
     ], None)),
 ]
