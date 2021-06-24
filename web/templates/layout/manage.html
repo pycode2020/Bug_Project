@@ -45,10 +45,14 @@
             {#判断URL 是否为manage 开头，判断进入项目#}
             {% if request.project.project %}
                 <ul class="nav navbar-nav">
-                    <li><a href="#">概览</a></li>
-                    <li><a href="#">问题</a></li>
-                    <li><a href="#">WIKI</a></li>
-                    <li><a href="#">...</a></li>
+                    {% manage_memu_list request %}
+
+                    {#                    <li><a href="{% url 'manage_dashboard' project_id=request.project.project.id %}">概览</a></li>#}
+                    {#                    <li><a href="{% url 'manage_issues' project_id=request.project.project.id %}">问题</a></li>#}
+                    {#                    <li><a href="{% url 'manage_statistics' project_id=request.project.project.id %}">统计</a></li>#}
+                    {#                    <li><a href="{% url 'manage_file' project_id=request.project.project.id %}">文件</a></li>#}
+                    {#                    <li><a href="{% url 'manage_wiki' project_id=request.project.project.id %}">文档</a></li>#}
+                    {#                    <li><a href="{% url 'manage_setting' project_id=request.project.project.id %}">设置</a></li>#}
                 </ul>
             {% endif %}
 
